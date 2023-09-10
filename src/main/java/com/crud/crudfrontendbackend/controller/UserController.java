@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @RestController
@@ -21,7 +24,7 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public ApiResultModel createUser(@RequestBody UserDto userDto) {
+    public ApiResultModel createUser(@RequestBody UserDto userDto) throws NoSuchAlgorithmException, InvalidKeySpecException, Exception {
         return ApiResultModel.builder()
                 .resultData(userService.createUser(userDto))
                 .message("Success")

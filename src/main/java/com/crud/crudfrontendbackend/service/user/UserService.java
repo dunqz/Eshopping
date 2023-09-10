@@ -4,11 +4,13 @@ import com.crud.crudfrontendbackend.dto.UserDto;
 import com.crud.crudfrontendbackend.dto.UserUpdateDto;
 import com.crud.crudfrontendbackend.model.User;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
 public interface UserService {
 
-    User createUser(UserDto userDto);
+    User createUser(UserDto userDto) throws NoSuchAlgorithmException, InvalidKeySpecException, Exception;
 
     List<User> getALlUsers();
 

@@ -13,6 +13,8 @@ import javax.persistence.Column;
 @Data
 public class ProductDto {
 
+    private Long id;
+
     private String productName;
 
     private String supplierName;
