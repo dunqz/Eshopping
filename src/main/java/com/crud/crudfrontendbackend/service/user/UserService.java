@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface UserService {
 
-    User createUser(UserDto userDto) throws NoSuchAlgorithmException, InvalidKeySpecException, Exception;
+    User createUser(UserDto userDto) throws Exception;
 
     List<User> getALlUsers();
 

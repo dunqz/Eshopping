@@ -24,7 +24,7 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public ApiResultModel createUser(@RequestBody UserDto userDto) throws NoSuchAlgorithmException, InvalidKeySpecException, Exception {
+    public ApiResultModel createUser(@RequestBody UserDto userDto) throws Exception {
         return ApiResultModel.builder()
                 .resultData(userService.createUser(userDto))
                 .message("Success")
