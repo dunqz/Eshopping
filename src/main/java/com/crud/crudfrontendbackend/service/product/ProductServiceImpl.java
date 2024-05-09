@@ -1,9 +1,12 @@
 package com.crud.crudfrontendbackend.service.product;
 
 
+import com.crud.crudfrontendbackend.dto.BuyProductDto;
+import com.crud.crudfrontendbackend.dto.CreateProductDto;
 import com.crud.crudfrontendbackend.dto.ProductDto;
 import com.crud.crudfrontendbackend.dto.ProductUpdateDto;
 import com.crud.crudfrontendbackend.model.Product;
+import com.crud.crudfrontendbackend.repository.ProdCriteriaBuilder;
 import com.crud.crudfrontendbackend.repository.ProductRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +34,18 @@ public class ProductServiceImpl implements ProductService{
 
     private String uploadFolder =  "D:/cpe/crud/images";
 
+//    @Autowired
+//    private final ProdCriteriaBuilder prodCriteriaBuilder;
+//
+//
+//    public List<Product> filterItemInStore(String productName, String classify, Integer minPrice, Integer maxPrice, String sort) {
+//        return prodCriteriaBuilder.filterItemInStore(productName, classify, minPrice, maxPrice, sort);
+//    }
+
     public List<ProductDto> getAllProduct(){
         List<Product> products = productRepository.findAllNotDeletedProduct();
         return products.stream().map(this::convertToDtoWithBase64Image).collect(Collectors.toList());
     }
-
     private ProductDto convertToDtoWithBase64Image(Product product) {
         ProductDto productDto = new ProductDto();
         BeanUtils.copyProperties(product, productDto, "image"); // Exclude the "image" field from copying
@@ -90,53 +100,55 @@ public class ProductServiceImpl implements ProductService{
         }
     }
 
-    public Product createProduct(ProductDto productDto){
-        Product existingProduct = productRepository.findbyProductName(productDto.getProductName());
+    public Product createProduct(CreateProductDto createProductDto){
+        Product existingProduct = productRepository.findbyProductName(createProductDto.getProductName());
         if(existingProduct != null){
             throw new IllegalStateException("Product already exists");
         }
         Product product = new Product();
-        BeanUtils.copyProperties(productDto, product);
+        BeanUtils.copyProperties(createProductDto, product);
+        product.setIsActive(true);
         product.setIsDeleted(false);
         Product newProduct = productRepository.save(product);
 
         return newProduct;
     }
 
-    public Product addProduct(MultipartFile file,ProductDto productDto){
-        Product existingProduct = productRepository.findbyProductName(productDto.getProductName());
-        if(existingProduct != null){
-            throw new IllegalStateException("Product already exists");
-        }
-        try{
-            byte[] data;
-            String fileName;
-
-            if (isBase64Encoded(file)) {
-                // File is base64-encoded
-                data = Base64.getDecoder().decode(getBase64Data(file));
-                fileName = "image.jpg"; // Provide a suitable file name here
-            } else {
-                // File is not base64-encoded
-                data = file.getBytes();
-                fileName = file.getOriginalFilename();
-            }
-
-            String filePath = uploadFolder + "/" + fileName;
-            Files.write(Paths.get(filePath), data);
-
-            Product product = new Product();
-            BeanUtils.copyProperties(productDto, product, "image");
-            product.setImage(filePath);
-            product.setIsDeleted(false);
-            Product newProduct = productRepository.save(product);
-
-            return newProduct;
-
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    //Resolved [org.springframework.web.multipart.support.MissingServletRequestPartException: Required request part 'image' is not present]
+//    public Product addProduct(MultipartFile file,ProductDto productDto){
+//        Product existingProduct = productRepository.findbyProductName(productDto.getProductName());
+//        if(existingProduct != null){
+//            throw new IllegalStateException("Product already exists");
+//        }
+//        try{
+//            byte[] data;
+//            String fileName;
+//
+//            if (isBase64Encoded(file)) {
+//                // File is base64-encoded
+//                data = Base64.getDecoder().decode(getBase64Data(file));
+//                fileName = "image.jpg"; // Provide a suitable file name here
+//            } else {
+//                // File is not base64-encoded
+//                data = file.getBytes();
+//                fileName = file.getOriginalFilename();
+//            }
+//
+//            String filePath = uploadFolder + "/" + fileName;
+//            Files.write(Paths.get(filePath), data);
+//
+//            Product product = new Product();
+//            BeanUtils.copyProperties(productDto, product, "image");
+//            product.setImage(filePath);
+//            product.setIsDeleted(false);
+//            Product newProduct = productRepository.save(product);
+//
+//            return newProduct;
+//
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
     private boolean isBase64Encoded(MultipartFile file) {
         return file.getContentType() != null && file.getContentType().startsWith("data:image/");
     }
@@ -153,5 +165,36 @@ public class ProductServiceImpl implements ProductService{
         Product updatedProduct = productRepository.save(existingProduct);
         return updatedProduct;
     }
+
+
+    public Product buyProduct(List<BuyProductDto> buyProductDtos) {
+        for (BuyProductDto buyProductDto : buyProductDtos) {
+            // Product existingSeller = productRepository.findbySeller(buyProductDto.getSeller());
+            Product existingProduct = productRepository.findbyProductName(buyProductDto.getProductName());
+
+            // if(existingSeller == null){
+            //     throw new IllegalStateException("Seller does not exist");
+            // }
+
+            if (existingProduct == null && !existingProduct.getIsDeleted()) {
+                throw new IllegalStateException("Product does not exist");
+            }
+
+            int availableStock = existingProduct.getStock();
+            int requestedStock = buyProductDto.getQuantity();
+
+            if (availableStock < requestedStock) {
+                throw new IllegalStateException("Insufficient stock available for purchase");
+            }
+
+            existingProduct.setStock(availableStock - requestedStock);
+
+            Product updatedProduct = productRepository.save(existingProduct);
+            // Do something with updatedProduct if needed
+        }
+
+        return null;
+    }
+
 
 }

@@ -2,31 +2,19 @@ package com.crud.crudfrontendbackend.dto;
 
 import lombok.*;
 
-import javax.persistence.Column;
-
-
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ProductDto {
-
-    private Long id;
+public class BuyProductDto {
 
     private String productName;
 
     private String seller;
 
-    private Boolean isActive;
-
-    private int stock;
-
-    private int price;
-
-    private String image;
+    private int quantity;
 
     private String classify;
-
 }

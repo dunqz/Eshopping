@@ -2,6 +2,7 @@ package com.crud.crudfrontendbackend.service.user;
 
 import com.crud.crudfrontendbackend.dto.UserDto;
 import com.crud.crudfrontendbackend.dto.UserUpdateDto;
+//import com.crud.crudfrontendbackend.email.EmailMessage;
 import com.crud.crudfrontendbackend.email.EmailSender;
 import com.crud.crudfrontendbackend.email.EmailService;
 import com.crud.crudfrontendbackend.encryption.AESEncrypt;
@@ -14,6 +15,7 @@ import com.crud.crudfrontendbackend.email.token.ConfirmationTokenService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,9 +27,7 @@ import javax.transaction.Transactional;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @AllArgsConstructor
@@ -43,6 +43,9 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private final EmailSender emailSender;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate; // Inject RabbitMQ template
 
     /**
      *
@@ -116,11 +119,26 @@ public class UserServiceImpl implements UserService{
 
         confirmationTokenService.saveConfirmationToken(confirmationToken);
 
+        String link = "https://example.com/confirm?token=" + token; // Generate confirmation link
 
-        String link = "https://example.com/confirm?token=" + token;
+        // Prepare email content
         String emailContent = buildEmail(newUser.getName(), link);
-        emailSender.send(newUser.getEmailAddress(), emailContent);
 
+        // Send message to RabbitMQ with email details
+        Map<String, String> message = new HashMap<>();
+        message.put("emailAddress", newUser.getEmailAddress());
+        message.put("emailContent", emailContent);
+//        EmailMessage emailMessage = new EmailMessage();
+//        emailMessage.setEmailAddress(newUser.getEmailAddress());
+//        emailMessage.setEmailContent(emailContent);
+
+//        // Publish message to RabbitMQ
+         rabbitTemplate.convertAndSend("send-email-maildev", "foo.bar.email", message);
+//
+//        emailSender.send(newUser.getEmailAddress(), emailContent);
+
+        // Publish message to RabbitMQ
+        //rabbitTemplate.convertAndSend("send-email-maildev","foo.bar.email", emailMessage); // Send message to RabbitMQ queue
 
         return newUser;
     }

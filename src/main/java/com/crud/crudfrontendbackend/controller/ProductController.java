@@ -2,9 +2,13 @@ package com.crud.crudfrontendbackend.controller;
 
 
 import com.crud.crudfrontendbackend.apiresultmodel.ApiResultModel;
+import com.crud.crudfrontendbackend.dto.BuyProductDto;
+import com.crud.crudfrontendbackend.dto.CreateProductDto;
 import com.crud.crudfrontendbackend.dto.ProductDto;
 import com.crud.crudfrontendbackend.dto.ProductUpdateDto;
+import com.crud.crudfrontendbackend.repository.ProdCriteriaBuilder;
 import com.crud.crudfrontendbackend.service.product.ProductService;
+import com.crud.crudfrontendbackend.service.product.forFilters.ProdService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,6 +28,10 @@ public class ProductController {
 
     @Autowired
     ProductService productService;
+
+    @Autowired
+    ProdService prodService;
+
 
     @PostMapping("/upload/{productName}")
     @ResponseStatus(HttpStatus.OK)
@@ -35,23 +44,23 @@ public class ProductController {
                 .build();
     }
 
-    @PostMapping(value = "/addproduct", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,
-                                                    MediaType.APPLICATION_JSON_VALUE})
-    @ResponseStatus(HttpStatus.OK)
-    public ApiResultModel addProduct(@RequestPart("image")MultipartFile file,@RequestPart ProductDto productDto ) {
-        return ApiResultModel.builder()
-                .resultData(productService.addProduct(file,productDto))
-                .message("Success")
-                .isSuccess(true)
-                .status(HttpStatus.OK.value())
-                .build();
-    }
+//    @PostMapping(value = "/addproduct", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE,
+//                                                    MediaType.APPLICATION_JSON_VALUE})
+//    @ResponseStatus(HttpStatus.OK)
+//    public ApiResultModel addProduct(@RequestPart("image")MultipartFile file,@RequestPart ProductDto productDto ) {
+//        return ApiResultModel.builder()
+//                .resultData(productService.addProduct(file,productDto))
+//                .message("Success")
+//                .isSuccess(true)
+//                .status(HttpStatus.OK.value())
+//                .build();
+//    }
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
-    public ApiResultModel createProduct(@RequestBody ProductDto productDto ) {
+    public ApiResultModel createProduct(@RequestBody CreateProductDto createProductDto ) {
         return ApiResultModel.builder()
-                .resultData(productService.createProduct(productDto))
+                .resultData(productService.createProduct(createProductDto))
                 .message("Success")
                 .isSuccess(true)
                 .status(HttpStatus.OK.value())
@@ -69,6 +78,24 @@ public class ProductController {
                 .build();
     }
 
+
+    @GetMapping("/filter")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResultModel getFilterItemInStore(
+            @RequestParam(required = false) String productName,
+            @RequestParam(required = false) String[] classify
+    ){
+        return ApiResultModel.builder()
+                .resultData(prodService.filterItemStore(productName, classify))
+                .message("Success")
+                .isSuccess(true)
+                .status(HttpStatus.OK.value())
+                .build();
+    }
+
+
+
+
     @PutMapping("/update/{productName}")
     @ResponseStatus(HttpStatus.OK)
     public ApiResultModel updateProduct(@PathVariable String productName,@RequestBody ProductUpdateDto productUpdateDto){
@@ -79,4 +106,17 @@ public class ProductController {
                 .status(HttpStatus.OK.value())
                 .build();
     }
+
+    @PutMapping("/buy")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResultModel buyProduct(@RequestBody List<BuyProductDto> buyProductDtos){
+        return ApiResultModel.builder()
+                .resultData(productService.buyProduct(buyProductDtos))
+                .message("Success")
+                .isSuccess(true)
+                .status(HttpStatus.OK.value())
+                .build();
+    }
+
+
 }

@@ -23,10 +23,7 @@ public class Product extends Auditable {
     private String productName;
 
     @Column(length = 64)
-    private String supplierName;
-
-    @Column(length = 64)
-    private String companyId;
+    private String seller;
 
     @Column(length = 2)
     private Boolean isDeleted;
@@ -43,4 +40,6 @@ public class Product extends Auditable {
     @Column(name = "price")
     private int price;
 
+    @Column(length = 64)
+    private String classify;
 }

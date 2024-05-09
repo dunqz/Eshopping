@@ -10,9 +10,7 @@ import lombok.*;
 @Data
 public class ProductUpdateDto {
 
-    private String supplierName;
-
-    private String companyId;
+    private String seller;
 
     private Boolean isActive;
 

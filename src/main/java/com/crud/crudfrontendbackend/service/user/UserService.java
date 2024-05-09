@@ -1,7 +1,9 @@
 package com.crud.crudfrontendbackend.service.user;
 
+import com.crud.crudfrontendbackend.dto.BuyProductDto;
 import com.crud.crudfrontendbackend.dto.UserDto;
 import com.crud.crudfrontendbackend.dto.UserUpdateDto;
+import com.crud.crudfrontendbackend.model.Product;
 import com.crud.crudfrontendbackend.model.User;
 
 import java.security.NoSuchAlgorithmException;
@@ -19,4 +21,5 @@ public interface UserService {
     User deleteUser(Long id);
 
     User updateUser(String email, UserUpdateDto userUpdateDto);
+
 }

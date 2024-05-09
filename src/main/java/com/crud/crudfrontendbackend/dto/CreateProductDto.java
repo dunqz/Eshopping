@@ -2,16 +2,13 @@ package com.crud.crudfrontendbackend.dto;
 
 import lombok.*;
 
-import javax.persistence.Column;
-
-
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ProductDto {
+public class CreateProductDto {
 
     private Long id;
 
@@ -24,8 +21,6 @@ public class ProductDto {
     private int stock;
 
     private int price;
-
-    private String image;
 
     private String classify;
 
