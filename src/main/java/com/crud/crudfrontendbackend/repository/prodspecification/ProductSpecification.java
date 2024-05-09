@@ -4,14 +4,13 @@ import com.crud.crudfrontendbackend.model.Product;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 
 
 public interface ProductSpecification {
-    static Specification<Product> filterItemStore(String productName, String[] classify){
+    static Specification<Product> filterItemStore(String productName, String[] classify, String order){
         return ((root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -25,15 +24,16 @@ public interface ProductSpecification {
                 }
                 predicates.add(in);
             }
+            if(order != null && !order.isEmpty()){
+                if(order.equalsIgnoreCase("ascending")){
+                    query.orderBy(cb.asc(root.get("price")));
+                }
+                else if(order.equalsIgnoreCase("descending")){
+                    query.orderBy(cb.desc(root.get("price")));
+                }
+            }
 
             return cb.and(predicates.toArray(new Predicate[0]));
         });
     }
 }
-
-//    static Specification<Product> hasProductName(String productName) {
-//        return (root, query, cb) -> productName == null ? null : cb.like(root.get("productName"), "%" + productName + "%");
-//    }
-//    static Specification<Product> hasClassify(String classify) {
-//        return (root, query, cb) -> classify == null ? null : cb.equal(root.get("classify"), classify);
-//    }

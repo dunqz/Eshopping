@@ -83,10 +83,11 @@ public class ProductController {
     @ResponseStatus(HttpStatus.OK)
     public ApiResultModel getFilterItemInStore(
             @RequestParam(required = false) String productName,
-            @RequestParam(required = false) String[] classify
+            @RequestParam(required = false) String[] classify,
+            @RequestParam(required = false) String order
     ){
         return ApiResultModel.builder()
-                .resultData(prodService.filterItemStore(productName, classify))
+                .resultData(prodService.filterItemStore(productName, classify, order))
                 .message("Success")
                 .isSuccess(true)
                 .status(HttpStatus.OK.value())

@@ -6,7 +6,6 @@ import com.crud.crudfrontendbackend.dto.CreateProductDto;
 import com.crud.crudfrontendbackend.dto.ProductDto;
 import com.crud.crudfrontendbackend.dto.ProductUpdateDto;
 import com.crud.crudfrontendbackend.model.Product;
-import com.crud.crudfrontendbackend.repository.ProdCriteriaBuilder;
 import com.crud.crudfrontendbackend.repository.ProductRepository;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -33,14 +32,6 @@ public class ProductServiceImpl implements ProductService{
     ProductRepository productRepository;
 
     private String uploadFolder =  "D:/cpe/crud/images";
-
-//    @Autowired
-//    private final ProdCriteriaBuilder prodCriteriaBuilder;
-//
-//
-//    public List<Product> filterItemInStore(String productName, String classify, Integer minPrice, Integer maxPrice, String sort) {
-//        return prodCriteriaBuilder.filterItemInStore(productName, classify, minPrice, maxPrice, sort);
-//    }
 
     public List<ProductDto> getAllProduct(){
         List<Product> products = productRepository.findAllNotDeletedProduct();

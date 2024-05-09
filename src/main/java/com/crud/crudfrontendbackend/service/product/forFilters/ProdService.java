@@ -24,13 +24,8 @@ public class ProdService {
         this.productRepository = productRepository;
     }
 
-
-//    public List<ProductFilter> filterItemStore(String productName, String[] classify) {
-//        List<ProductFilter> filteredProducts =  productRepository.filterItemStore(productName, classify);
-//        return filteredProducts;
-//    }
-    public List<ProductFilter> filterItemStore(String productName, String[] classify) {
-        List<ProductFilter> filteredProducts =  productRepository.filterItemStore(productName, classify);
+    public List<ProductFilter> filterItemStore(String productName, String[] classify,String order) {
+        List<ProductFilter> filteredProducts =  productRepository.filterItemStore(productName, classify, order);
 
         List<ProductFilter> productFilters = new ArrayList<>();
         for ( ProductFilter product : filteredProducts) {
@@ -61,8 +56,3 @@ public class ProdService {
     }
 
 }
-
-//    public List<Product> filterItemStore(String productName, String classify) {
-//        List<Product> filteredProducts = productRepository.findAll(Specification.where(hasProductName(productName).and(hasClassify(classify))));
-//        return filteredProducts;
-//    }

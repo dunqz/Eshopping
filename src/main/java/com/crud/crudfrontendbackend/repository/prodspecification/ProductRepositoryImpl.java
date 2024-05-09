@@ -22,7 +22,7 @@ import java.util.List;
 public class ProductRepositoryImpl {
     private final EntityManager em;
 
-    public List<ProductFilter> filterItemStore(String productName, String[] classify) {
+    public List<ProductFilter> filterItemStore(String productName, String[] classify, String order) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
         CriteriaQuery<ProductFilter> cq = cb.createQuery(ProductFilter.class);
         Root<Product> root = cq.from(Product.class);
@@ -39,7 +39,7 @@ public class ProductRepositoryImpl {
                 root.get("image"),
                 root.get("classify")));
 
-        Specification<Product> specification = ProductSpecification.filterItemStore(productName, classify);
+        Specification<Product> specification = ProductSpecification.filterItemStore(productName, classify, order);
         Predicate predicate = specification.toPredicate(root, cq, cb);
         cq.where(predicate);
 
@@ -47,4 +47,3 @@ public class ProductRepositoryImpl {
         return query.getResultList();
     }
 }
-//public interface  ProductRepositoryImpl extends JpaRepository<Product, Long>, JpaSpecificationExecutor<Product> {}
